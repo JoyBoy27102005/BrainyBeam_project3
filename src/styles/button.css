@@ -1,0 +1,46 @@
+.bb-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: var(--button-text);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.bb-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.bb-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.bb-button-secondary {
+  background: var(--secondary);
+  color: var(--button-text);
+}
+
+.bb-button-danger {
+  background: var(--danger);
+  color: var(--button-text);
+}
+
+.bb-button-success {
+  background: var(--success);
+  color: var(--button-text);
+}
+
+.bb-button-outline {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.bb-theme-toggle {
+  min-width: 120px;
+}

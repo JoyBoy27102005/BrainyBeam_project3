@@ -3,16 +3,25 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css' // Bootstrap styles
+import './styles/theme.css'
+import './styles/button.css'
+import './styles/card.css'
+import './styles/modal.css'
+import './styles/loader.css'
+import './styles/toast.css'
 import './index.css' // App-specific styles
 import App from './App'
+import { ThemeProvider } from './context/ThemeContext'
 
 const container = document.getElementById('root')
 const root = createRoot(container)
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 )

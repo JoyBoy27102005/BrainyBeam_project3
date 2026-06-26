@@ -1,55 +1,84 @@
 // Login page: simple form that stores a fake auth token in localStorage
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Input from '../components/common/Input'
+import Button from '../components/common/Button'
+import Toast from '../components/common/Toast'
 
 export default function Login(){
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [toast, setToast] = useState(null)
   const navigate = useNavigate()
 
   async function submit(e){
     e.preventDefault()
     setLoading(true)
     setError(null)
+
     try{
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name })
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Login failed')
 
-      // store token and user info
+      let data = null
+      try {
+        data = await res.json()
+      } catch {
+        throw new Error('Unexpected response from server. Please try again.')
+      }
+
+      if (!res.ok) throw new Error(data?.message || 'Login failed')
+
       localStorage.setItem('token', data.token)
       localStorage.setItem('user_name', data.user.name)
       localStorage.setItem('user_email', data.user.email)
-      navigate('/dashboard')
+      setToast({ message: 'Login successful. Redirecting…', type: 'success' })
+      window.setTimeout(() => navigate('/dashboard'), 700)
     }catch(err){
       setError(err.message)
+      setToast({ message: err.message, type: 'error' })
     }finally{
       setLoading(false)
     }
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center" style={{minHeight: '100vh'}}>
-      <div className="card p-4" style={{width:360}}>
+    <div className="bb-center-screen">
+      <div className="bb-card bb-login-card p-4">
         <h4 className="mb-3">Login</h4>
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger" role="alert">{error}</div>}
         <form onSubmit={submit}>
-          <div className="mb-3">
-            <label className="form-label">Name</label>
-            <input className="form-control" value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input className="form-control" value={email} onChange={e=>setEmail(e.target.value)} type="email" required />
-          </div>
-          <button className="btn btn-primary w-100" type="submit" disabled={loading}>{loading? 'Signing in...' : 'Sign in'}</button>
+          <Input
+            label="Name"
+            placeholder="Your name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />
+          <Input
+            label="Email"
+            placeholder="Your email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <Button type="submit" disabled={loading} className="w-100">
+            {loading ? 'Signing in…' : 'Sign in'}
+          </Button>
         </form>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
     </div>
   )

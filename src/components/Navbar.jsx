@@ -1,55 +1,76 @@
 // Responsive top navigation bar with logo and links
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import Button from './common/Button'
+import Modal from './common/Modal'
+import ThemeToggle from './common/ThemeToggle'
 
 export default function Navbar() {
   const navigate = useNavigate()
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
 
   function handleLogout() {
-    // Clear simple auth flag and redirect to login
     localStorage.removeItem('token')
     localStorage.removeItem('user_name')
     localStorage.removeItem('user_email')
+    setShowLogoutModal(false)
     navigate('/login')
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container-fluid">
-        <NavLink className="navbar-brand d-flex align-items-center" to="/">
-          <img src="/src/assets/logo.svg" alt="Logo" className="brand-logo me-2" />
-          <span>BrainyBeam</span>
-        </NavLink>
+    <>
+      <nav className="navbar navbar-expand-lg bb-navbar">
+        <div className="container-fluid">
+          <NavLink className="navbar-brand d-flex align-items-center" to="/">
+            <img src="/src/assets/logo.svg" alt="Logo" className="brand-logo me-2" />
+            <span>BrainyBeam</span>
+          </NavLink>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNav"
-          aria-controls="mainNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
+          <button
+            className="navbar-toggler"
+            type="button"
+            aria-controls="mainNav"
+            aria-expanded={navOpen}
+            aria-label="Toggle navigation"
+            onClick={() => setNavOpen(open => !open)}
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
 
-        <div className="collapse navbar-collapse" id="mainNav">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink to="/" className={({isActive})=>"nav-link" + (isActive? ' active' : '')}>Home</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/dashboard" className={({isActive})=>"nav-link" + (isActive? ' active' : '')}>Dashboard</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/profile" className={({isActive})=>"nav-link" + (isActive? ' active' : '')}>Profile</NavLink>
-            </li>
-            <li className="nav-item">
-              <button className="btn btn-outline-secondary ms-2" onClick={handleLogout}>Logout</button>
-            </li>
-          </ul>
+          <div className={`collapse navbar-collapse${navOpen ? ' show' : ''}`} id="mainNav">
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+              <li className="nav-item">
+                <NavLink to="/" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} onClick={() => setNavOpen(false)}>Home</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/dashboard" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} onClick={() => setNavOpen(false)}>Dashboard</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/profile" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} onClick={() => setNavOpen(false)}>Profile</NavLink>
+              </li>
+              <li className="nav-item d-flex align-items-center ms-2">
+                <ThemeToggle />
+              </li>
+              <li className="nav-item ms-2">
+                <Button variant="outline" onClick={() => setShowLogoutModal(true)} ariaLabel="Logout">Logout</Button>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <Modal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        title="Confirm logout"
+      >
+        <p>Are you sure you want to sign out?</p>
+        <div className="d-flex justify-content-end gap-2 mt-3">
+          <Button variant="outline" onClick={() => setShowLogoutModal(false)} ariaLabel="Cancel logout">Cancel</Button>
+          <Button variant="danger" onClick={handleLogout} ariaLabel="Confirm logout">Logout</Button>
+        </div>
+      </Modal>
+    </>
   )
 }

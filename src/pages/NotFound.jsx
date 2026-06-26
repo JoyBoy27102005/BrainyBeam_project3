@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 
 export default function NotFound(){
   return (
-    <div className="d-flex align-items-center justify-content-center" style={{minHeight: '100vh'}}>
+    <div className="bb-center-screen">
       <div className="text-center">
         <h1>404</h1>
         <p>Page not found.</p>
-        <Link to="/">Go home</Link>
+        <Link to="/" className="bb-button bb-button-outline">Go home</Link>
       </div>
     </div>
   )
